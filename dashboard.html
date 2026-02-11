@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - VGVS Research</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
+                    colors: { primary: '#3b82f6', secondary: '#8b5cf6', darker: '#020617' }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: #020617;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+        }
+    </style>
+</head>
+
+<body class="text-gray-100 min-h-screen flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col fixed h-full z-10 glass-panel">
+        <div class="p-6 border-b border-slate-800">
+            <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+                VGVS Admin</h1>
+        </div>
+        <nav class="flex-grow p-4 space-y-2">
+            <a href="#" class="block px-4 py-3 rounded-xl bg-blue-600/20 text-blue-400 font-medium">
+                <i class="fas fa-upload mr-3"></i> Upload Research
+            </a>
+            <a href="research.html"
+                class="block px-4 py-3 rounded-xl text-gray-400 hover:bg-slate-800 hover:text-white transition-colors">
+                <i class="fas fa-file-alt mr-3"></i> View All Papers
+            </a>
+            <a href="index.html"
+                class="block px-4 py-3 rounded-xl text-gray-400 hover:bg-slate-800 hover:text-white transition-colors">
+                <i class="fas fa-home mr-3"></i> Main Site
+            </a>
+        </nav>
+        <div class="p-4 border-t border-slate-800">
+            <div class="flex items-center space-x-3 mb-4">
+                <div
+                    class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold">
+                    A</div>
+                <div>
+                    <div class="text-sm font-medium" id="admin-name">Admin</div>
+                    <div class="text-xs text-green-400">Online</div>
+                </div>
+            </div>
+            <button onclick="logout()"
+                class="w-full py-2 border border-slate-700 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-slate-800 transition-colors">
+                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-64 flex-grow p-8">
+        <header class="flex justify-between items-center mb-8">
+            <h2 class="text-3xl font-bold">Research Management</h2>
+            <div class="flex items-center space-x-4">
+                <span id="clock" class="text-gray-400 font-mono">00:00:00</span>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="glass-panel p-6 rounded-2xl">
+                <div class="text-gray-400 text-sm uppercase mb-1">Total Papers</div>
+                <div class="text-3xl font-bold text-white count-papers">0</div>
+            </div>
+            <div class="glass-panel p-6 rounded-2xl">
+                <div class="text-gray-400 text-sm uppercase mb-1">Total Views</div>
+                <div class="text-3xl font-bold text-white count-views">0</div>
+            </div>
+            <div class="glass-panel p-6 rounded-2xl">
+                <div class="text-gray-400 text-sm uppercase mb-1">System Status</div>
+                <div class="text-3xl font-bold text-green-400">Active</div>
+            </div>
+        </div>
+
+        <!-- Upload Form -->
+        <div class="glass-panel rounded-2xl p-8 mb-8">
+            <h3 class="text-xl font-bold mb-6 flex items-center">
+                <span class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center mr-3">
+                    <i class="fas fa-plus"></i>
+                </span>
+                Add New Research
+            </h3>
+
+            <form id="upload-form" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-400 text-sm font-medium mb-2">Title</label>
+                        <input type="text" id="paper-title" required
+                            class="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
+                            placeholder="Research Title">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm font-medium mb-2">Category</label>
+                        <select id="paper-category"
+                            class="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors">
+                            <option>Biology</option>
+                            <option>Computer Science</option>
+                            <option>Physics</option>
+                            <option>Chemistry</option>
+                            <option>Mathematics</option>
+                            <option>Engineering</option>
+                            <option>Medicine</option>
+                            <option>Social Science</option>
+                            <option>Business</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 text-sm font-medium mb-2">Abstract</label>
+                    <textarea id="paper-abstract" rows="4" required
+                        class="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
+                        placeholder="Brief summary of the research..."></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 text-sm font-medium mb-2">Upload PDF</label>
+                    <div class="relative border-2 border-dashed border-slate-700 rounded-xl p-8 text-center hover:border-blue-500 transition-colors cursor-pointer"
+                        id="drop-zone">
+                        <input type="file" id="paper-file" accept=".pdf"
+                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-500 mb-2"></i>
+                        <p class="text-gray-400">Drag & drop your PDF here or click to browse</p>
+                        <p class="text-xs text-gray-600 mt-2">Max file size: 10MB (2MB limit for preview)</p>
+                        <p id="file-name" class="text-blue-400 mt-2 hidden font-medium"></p>
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit"
+                        class="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-blue-500/25">
+                        <i class="fas fa-paper-plane mr-2"></i> Publish Research
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Check Admin Access
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user || user.role !== 'admin') {
+            // Check if uploader, limit features
+            if (user && user.role === 'uploader') {
+                // Uploader can access but restricted features (handled in UI render)
+                document.getElementById('admin-name').textContent = user.username;
+            } else {
+                alert("Access Denied. Admins Only.");
+                window.location.href = 'index.html';
+            }
+        } else {
+            document.getElementById('admin-name').textContent = user.username + " (Admin)";
+        }
+
+        // --- Render "Manage Papers" Section ---
+        const manageSection = document.createElement('div');
+        manageSection.className = 'glass-panel rounded-2xl p-8 mb-8';
+        manageSection.innerHTML = `
+            <h3 class="text-xl font-bold mb-6 text-white"><i class="fas fa-tasks mr-2 text-purple-400"></i> Manage Research Papers</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-gray-400">
+                    <thead class="text-xs uppercase bg-white/5 text-gray-300">
+                        <tr>
+                            <th class="px-6 py-3">Title</th>
+                            <th class="px-6 py-3">Author</th>
+                            <th class="px-6 py-3">Views</th>
+                            <th class="px-6 py-3">Date</th>
+                            <th class="px-6 py-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="papers-table-body" class="divide-y divide-white/5">
+                        <!-- Rows -->
+                    </tbody>
+                </table>
+            </div>
+        `;
+        document.querySelector('main').appendChild(manageSection);
+
+        function renderManageTable() {
+            const papers = JSON.parse(localStorage.getItem('research_papers') || '[]');
+            const tbody = document.getElementById('papers-table-body');
+
+            if (papers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center">No research papers uploaded yet.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = papers.map(paper => `
+                <tr class="hover:bg-white/5 transition-colors">
+                    <td class="px-6 py-4 font-medium text-white truncate max-w-xs" title="${paper.title}">${paper.title}</td>
+                    <td class="px-6 py-4">${paper.author}</td>
+                    <td class="px-6 py-4">
+                        <span class="text-blue-400 cursor-pointer hover:underline" onclick="showViewAnalytics(${paper.id})">
+                            ${paper.views} <i class="fas fa-info-circle text-xs ml-1"></i>
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">${new Date(paper.date).toLocaleDateString()}</td>
+                    <td class="px-6 py-4 space-x-2">
+                        <button onclick="deletePaper(${paper.id})" class="text-red-400 hover:text-red-300 transition-colors" title="Delete">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Initial Render
+        renderManageTable();
+
+        // --- Delete Logic ---
+        window.deletePaper = function (id) {
+            if (!confirm("Are you sure you want to delete this research paper? This cannot be undone.")) return;
+
+            let papers = JSON.parse(localStorage.getItem('research_papers') || '[]');
+            papers = papers.filter(p => p.id !== id);
+            localStorage.setItem('research_papers', JSON.stringify(papers));
+
+            renderManageTable();
+            // Update stats
+            document.querySelector('.count-papers').textContent = papers.length;
+            alert("Paper deleted successfully.");
+        };
+
+        // --- Analytics Modal Logic ---
+        window.showViewAnalytics = function (id) {
+            const papers = JSON.parse(localStorage.getItem('research_papers') || '[]');
+            const paper = papers.find(p => p.id === id);
+
+            if (!paper) return;
+
+            const viewedBy = paper.viewedBy || []; // Array of {username, date}
+
+            let html = `
+                <div class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm" id="analytics-modal">
+                    <div class="glass-panel p-8 rounded-2xl w-full max-w-lg relative bg-slate-900 border border-slate-700">
+                        <button onclick="document.getElementById('analytics-modal').remove()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                        <h3 class="text-xl font-bold mb-4">View Details: <span class="text-blue-400">${paper.title.substring(0, 20)}...</span></h3>
+                        <div class="max-h-64 overflow-y-auto space-y-2">
+                            ${viewedBy.length === 0 ? '<div class="text-gray-500 text-center py-4">No logged-in user views recorded yet.</div>' : ''}
+                            ${viewedBy.map(v => `
+                                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-blue-500 flex items-center justify-center text-xs font-bold mr-3">
+                                            ${v.username.charAt(0).toUpperCase()}
+                                        </div>
+                                        <span class="text-gray-200">${v.username}</span>
+                                    </div>
+                                    <div class="text-xs text-gray-500">${new Date(v.date).toLocaleString()}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', html);
+        };
+
+        // --- File Upload Logic ---
+        document.getElementById('paper-file').addEventListener('change', function (e) {
+            const fileName = e.target.files[0]?.name;
+            const nameDisplay = document.getElementById('file-name');
+            if (fileName) {
+                nameDisplay.textContent = "Selected: " + fileName;
+                nameDisplay.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('paper-title').value;
+            const category = document.getElementById('paper-category').value;
+            const abstract = document.getElementById('paper-abstract').value;
+            const fileInput = document.getElementById('paper-file');
+            const file = fileInput.files[0];
+            const fileName = file ? file.name : 'untitled.pdf';
+
+            // 2.5MB Limit for LocalStorage
+            let pdfData = null;
+            if (file) {
+                if (file.size > 2.5 * 1024 * 1024) {
+                    if (!confirm("File > 2.5MB. Preview won't be available. Continue?")) return;
+                } else {
+                    try {
+                        const toBase64 = file => new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.readAsDataURL(file);
+                            reader.onload = () => resolve(reader.result);
+                            reader.onerror = error => reject(error);
+                        });
+                        pdfData = await toBase64(file);
+                    } catch (err) {
+                        console.error("Error reading file", err);
+                    }
+                }
+            }
+
+            const newPaper = {
+                id: Date.now(),
+                title,
+                category,
+                abstract,
+                fileName,
+                date: new Date().toISOString(),
+                author: user.username,
+                views: 0,
+                viewedBy: [], // Track who viewed it
+                comments: [], // Track comments
+                pdfData: pdfData
+            };
+
+            const papers = JSON.parse(localStorage.getItem('research_papers') || '[]');
+            papers.unshift(newPaper);
+
+            try {
+                localStorage.setItem('research_papers', JSON.stringify(papers));
+                alert("Research Paper Published! It is now live on the site.");
+                document.getElementById('upload-form').reset();
+                document.getElementById('file-name').classList.add('hidden');
+
+                // Refresh table & stats
+                renderManageTable();
+                const countPapers = document.querySelector('.count-papers');
+                if (countPapers) countPapers.textContent = papers.length;
+
+            } catch (e) {
+                alert("Storage Full! Delete old papers to upload new ones.");
+            }
+        });
+
+        // Initial Stats on Load
+        const papers = JSON.parse(localStorage.getItem('research_papers') || '[]');
+        document.querySelector('.count-papers').textContent = papers.length;
+        document.querySelector('.count-views').textContent = localStorage.getItem('total_views') || 0;
+
+    </script>
+</body>
+
+</html>

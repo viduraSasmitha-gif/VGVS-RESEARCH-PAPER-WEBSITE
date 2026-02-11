@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VGVS RESEARCH - Official Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#8b5cf6',
+                        dark: '#0f172a',
+                        darker: '#020617',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-in': 'fadeIn 1s ease-out',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .bg-slider {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            transition: background-image 1s ease-in-out;
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.4);
+        }
+    </style>
+</head>
+
+<body class="bg-darker text-gray-100 font-sans min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Dynamic Background -->
+    <div id="bg-slider" class="bg-slider"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/20">
+                        V
+                    </div>
+                    <span
+                        class="text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400 tracking-wider">
+                        VGVS<span class="text-white font-normal ml-1">RESEARCH</span>
+                    </span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-white font-medium border-b-2 border-primary pb-1"
+                        data-i18n="home">Home</a>
+                    <a href="research.html" class="text-gray-300 hover:text-white transition-colors nav-link"
+                        data-i18n="research">Research</a>
+
+                    <!-- Auth Actions -->
+                    <div id="auth-buttons" class="flex items-center space-x-4">
+                        <a href="login.html" class="text-gray-300 hover:text-white transition-colors"
+                            data-i18n="login">Login</a>
+                        <a href="register.html"
+                            class="px-5 py-2.5 bg-gradient-to-r from-primary to-secondary rounded-full text-white font-medium hover:opacity-90 transition-all shadow-lg shadow-blue-500/25"
+                            data-i18n="register">
+                            Register
+                        </a>
+                    </div>
+
+                    <!-- Language Selector -->
+                    <div class="relative group">
+                        <button class="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors">
+                            <i class="fas fa-globe"></i>
+                            <span id="current-lang">EN</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <div
+                            class="absolute right-0 mt-2 w-32 bg-slate-800 rounded-lg shadow-xl border border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                            <button onclick="changeLanguage('en')"
+                                class="block w-full text-left px-4 py-2 hover:bg-slate-700 rounded-t-lg transition-colors text-sm">English</button>
+                            <button onclick="changeLanguage('si')"
+                                class="block w-full text-left px-4 py-2 hover:bg-slate-700 transition-colors text-sm">Sinhala</button>
+                            <button onclick="changeLanguage('ta')"
+                                class="block w-full text-left px-4 py-2 hover:bg-slate-700 rounded-b-lg transition-colors text-sm">Tamil</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu"
+            class="hidden md:hidden glass-nav absolute top-20 left-0 w-full border-t border-white/10 animate-fade-in">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="index.html"
+                    class="block px-3 py-3 rounded-xl text-base font-medium text-white hover:bg-white/10"
+                    data-i18n="home">Home</a>
+                <a href="research.html"
+                    class="block px-3 py-3 rounded-xl text-base font-medium text-gray-300 hover:text-white hover:bg-white/10"
+                    data-i18n="research">Research</a>
+
+                <div class="border-t border-white/10 my-2"></div>
+
+                <!-- Auth Mobile -->
+                <div id="mobile-auth">
+                    <a href="login.html"
+                        class="block px-3 py-3 rounded-xl text-base font-medium text-gray-300 hover:text-white hover:bg-white/10"
+                        data-i18n="login">Login</a>
+                    <a href="register.html"
+                        class="block px-3 py-3 rounded-xl text-base font-medium text-blue-400 hover:bg-blue-500/10"
+                        data-i18n="register">Register</a>
+                </div>
+
+                <div class="border-t border-white/10 my-2"></div>
+
+                <!-- Languages -->
+                <div class="flex space-x-4 px-3 pt-2">
+                    <button onclick="changeLanguage('en')"
+                        class="text-sm text-gray-400 hover:text-white font-bold">EN</button>
+                    <button onclick="changeLanguage('si')"
+                        class="text-sm text-gray-400 hover:text-white font-bold">SI</button>
+                    <button onclick="changeLanguage('ta')"
+                        class="text-sm text-gray-400 hover:text-white font-bold">TA</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow z-10 pt-20">
+        <!-- Hero Section -->
+        <section class="relative py-20 lg:py-32 overflow-hidden min-h-[80vh] flex items-center">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+                <div class="flex flex-col lg:flex-row items-center gap-12">
+
+                    <div class="lg:w-1/2 text-left animate-fade-in">
+                        <span
+                            class="inline-block py-1 px-3 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6 backdrop-blur-md">
+                            <i class="fas fa-atom mr-2"></i> <span data-i18n="welcome_badge">Advanced Research
+                                Platform</span>
+                        </span>
+                        <h1 class="text-6xl lg:text-8xl font-bold mb-6 leading-tight tracking-tight">
+                            VGVS <br>
+                            <span
+                                class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">RESEARCH</span>
+                        </h1>
+                        <p class="text-xl text-gray-300 mb-10 leading-relaxed font-light" data-i18n="hero_desc">
+                            The ultimate hub for academic excellence. Upload, share, and discuss groundbreaking research
+                            in a secure, advanced environment.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="research.html"
+                                class="px-8 py-4 bg-white text-darker font-bold rounded-full hover:bg-gray-100 transition-all transform hover:scale-105 shadow-xl flex items-center justify-center">
+                                <span data-i18n="explore_btn">Explore Papers</span>
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Scan QR Section -->
+                    <div class="lg:w-1/2 flex justify-center lg:justify-end">
+                        <div
+                            class="glass-nav p-8 rounded-3xl border border-white/10 shadow-2xl relative animate-float backdrop-blur-xl">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-3xl">
+                            </div>
+                            <div class="text-center relative z-10">
+                                <h3 class="text-xl font-bold mb-4">Scan to Join VGVS</h3>
+                                <div class="bg-white p-4 rounded-xl shadow-lg inline-block text-center">
+                                    <div id="qrcode"></div>
+                                </div>
+                                <p class="text-gray-400 text-sm mt-4">Use your phone to access instantly</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="py-12 border-y border-white/5 bg-black/40 backdrop-blur-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    <div class="p-6">
+                        <div class="text-4xl font-bold text-white mb-2" id="stats-papers">0</div>
+                        <div class="text-gray-400 uppercase tracking-wider text-sm" data-i18n="stat_papers">Research
+                            Papers</div>
+                    </div>
+                    <div class="p-6 border-l border-white/5">
+                        <div class="text-4xl font-bold text-white mb-2" id="stats-views">0</div>
+                        <div class="text-gray-400 uppercase tracking-wider text-sm" data-i18n="stat_views">Total Views
+                        </div>
+                    </div>
+                    <div class="p-6 border-l border-white/5">
+                        <div class="text-4xl font-bold text-white mb-2 font-mono" id="clock">00:00:00</div>
+                        <div class="text-gray-400 uppercase tracking-wider text-sm" id="date-display">Date</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/80 border-t border-white/10 py-12 mt-auto backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h2 class="text-2xl font-bold text-white mb-4">VGVS RESEARCH</h2>
+            <div class="flex justify-center space-x-6 mb-8">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i
+                        class="fab fa-facebook text-xl"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i
+                        class="fab fa-twitter text-xl"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i
+                        class="fab fa-linkedin text-xl"></i></a>
+            </div>
+            <p class="text-gray-500" data-i18n="footer_copy">&copy; 2026 VGVS Research. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Dynamic Background Slider
+        const images = [
+            'https://images.unsplash.com/photo-1507668077129-56e3281602fc?q=80&w=1920&auto=format&fit=crop', // Abstract
+            'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=1920&auto=format&fit=crop', // Lab
+            'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920&auto=format&fit=crop', // Tech
+            'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1920&auto=format&fit=crop'  // Laptop
+        ];
+
+        let currentImage = 0;
+        const slider = document.getElementById('bg-slider');
+
+        function changeBackground() {
+            slider.style.backgroundImage = `url('${images[currentImage]}')`;
+            currentImage = (currentImage + 1) % images.length;
+        }
+
+        changeBackground();
+        setInterval(changeBackground, 5000); // Change every 5 seconds
+
+        // QR Code Generator
+        new QRCode(document.getElementById("qrcode"), {
+            text: window.location.href,
+            width: 128,
+            height: 128,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    </script>
+</body>
+
+</html>

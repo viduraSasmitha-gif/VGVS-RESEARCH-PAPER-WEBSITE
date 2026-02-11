@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Paper - VGVS Research</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
+                    colors: { primary: '#3b82f6', secondary: '#8b5cf6', darker: '#020617' }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: #020617;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+        }
+
+        .pdf-preview {
+            background-color: #f3f4f6;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+        }
+    </style>
+</head>
+
+<body class="bg-darker text-gray-100 font-sans min-h-screen">
+
+    <!-- Navigation (Back) -->
+    <nav class="fixed w-full z-50 bg-slate-900/50 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="research.html" class="flex items-center text-gray-300 hover:text-white transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Back to Library
+                </a>
+                <div class="text-sm text-gray-500 font-medium">
+                    Research ID: <span id="paper-id" class="text-blue-400">#</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        <div id="loading" class="text-center py-20">
+            <div class="inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin">
+            </div>
+        </div>
+
+        <div id="content" class="hidden animate-fade-in-up">
+            <!-- Header -->
+            <div class="mb-8">
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <span id="paper-category"
+                        class="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-xs font-semibold uppercase tracking-wider border border-blue-500/20">
+                        Category
+                    </span>
+                    <span id="paper-date"
+                        class="px-3 py-1 bg-white/5 text-gray-400 rounded-full text-xs font-medium border border-white/10">
+                        Date
+                    </span>
+                </div>
+                <h1 id="paper-title"
+                    class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400 mb-6 leading-tight">
+                    Title
+                </h1>
+                <div class="flex items-center space-x-4 border-b border-white/10 pb-8">
+                    <div
+                        class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-lg">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-400">Published by</div>
+                        <div id="paper-author" class="text-white font-medium">Author Name</div>
+                    </div>
+                    <div class="ml-auto flex items-center text-gray-500 text-sm">
+                        <i class="fas fa-eye mr-2"></i> <span id="paper-views">0</span> Views
+                    </div>
+                </div>
+
+                <!-- Mobile Actions -->
+                <div class="lg:hidden flex space-x-3 mb-6">
+                    <button onclick="downloadPaper()"
+                        class="flex-1 bg-blue-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-blue-600/20 text-center">
+                        <i class="fas fa-download mr-2"></i> Download
+                    </button>
+                    <button onclick="sharePaper()"
+                        class="flex-1 bg-white/10 text-white font-medium py-3 px-4 rounded-xl border border-white/10 text-center">
+                        <i class="fas fa-share-alt mr-2"></i> Share
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Main Column -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Abstract -->
+                    <div class="glass-panel p-8 rounded-2xl">
+                        <h3 class="text-xl font-bold mb-4 flex items-center text-white">
+                            <i class="fas fa-align-left mr-3 text-blue-400"></i> Abstract
+                        </h3>
+                        <p id="paper-abstract" class="text-gray-300 leading-relaxed text-lg">
+                            Loading abstract...
+                        </p>
+                    </div>
+
+                    <!-- PDF Preview -->
+                    <div class="glass-panel p-1 rounded-2xl overflow-hidden min-h-[600px] flex flex-col relative">
+                        <div id="pdf-container" class="flex-grow bg-slate-800 rounded-xl overflow-hidden relative">
+                            <div class="absolute inset-0 flex items-center justify-center text-gray-500">
+                                <div class="text-center">
+                                    <i class="fas fa-spinner fa-spin text-3xl mb-3"></i>
+                                    <p>Loading Preview...</p>
+                                </div>
+                            </div>
+                            <iframe id="pdf-frame" class="w-full h-full relative z-10" frameborder="0"></iframe>
+                        </div>
+                        <div id="no-preview"
+                            class="hidden absolute inset-0 bg-slate-900 flex items-center justify-center z-20">
+                            <div class="text-center p-6">
+                                <i class="fas fa-file-pdf text-6xl text-red-500 mb-4 opacity-50"></i>
+                                <p class="text-gray-400 font-medium mb-2">Preview Not Available</p>
+                                <p class="text-sm text-gray-600">This paper does not have a previewable document.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comments Section -->
+                    <div class="glass-panel p-8 rounded-2xl">
+                        <h3 class="text-xl font-bold mb-6 flex items-center text-white">
+                            <i class="fas fa-comments mr-3 text-blue-400"></i> Discussion
+                        </h3>
+
+                        <!-- Input -->
+                        <div class="mb-8">
+                            <div class="flex gap-4">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-slate-700 flex-shrink-0 flex items-center justify-center text-gray-400">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="flex-grow">
+                                    <textarea id="comment-input" rows="3"
+                                        class="w-full bg-slate-800/50 border border-slate-700 rounded-xl p-4 text-white focus:outline-none focus:border-blue-500 transition-colors"
+                                        placeholder="Share your thoughts on this research..."></textarea>
+                                    <div class="flex justify-end mt-2">
+                                        <button onclick="postComment()"
+                                            class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-colors">
+                                            Post Comment
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- List -->
+                        <div id="comments-list" class="space-y-4">
+                            <!-- Comments injected via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="space-y-6">
+                    <!-- Actions -->
+                    <div class="glass-panel p-6 rounded-2xl sticky top-32">
+                        <h3 class="text-lg font-bold mb-6 border-b border-white/10 pb-4">Actions</h3>
+
+                        <button onclick="downloadPaper()"
+                            class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg shadow-blue-600/20 mb-3 flex items-center justify-center">
+                            <i class="fas fa-download mr-2"></i> Download PDF
+                        </button>
+
+                        <button onclick="sharePaper()"
+                            class="w-full bg-white/5 hover:bg-white/10 text-gray-300 font-medium py-3 px-4 rounded-xl transition-all border border-white/10 flex items-center justify-center">
+                            <i class="fas fa-share-alt mr-2"></i> Share Paper
+                        </button>
+
+                        <div class="mt-8 pt-6 border-t border-white/10">
+                            <div class="text-xs text-gray-500 uppercase tracking-widest mb-3">File Info</div>
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-400">Format:</span>
+                                <span class="text-white">PDF</span>
+                            </div>
+                            <div class="flex justify-between text-sm text-gray-500 mb-2">
+                                <span>File:</span>
+                                <span class="text-gray-400 truncate w-32 text-right" id="paper-filename">doc.pdf</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Auth Check
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+        }
+
+        // Get ID from URL
+        const params = new URLSearchParams(window.location.search);
+        const paperId = parseInt(params.get('id'));
+
+        // Fetch Paper
+        let papers = JSON.parse(localStorage.getItem('research_papers') || '[]');
+        let paper = papers.find(p => p.id === paperId);
+
+        // --- View Tracking Logic ---
+        if (paper) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('content').classList.remove('hidden');
+
+            // Update UI
+            document.getElementById('paper-id').textContent = paper.id;
+            document.getElementById('paper-title').textContent = paper.title;
+            document.getElementById('paper-category').textContent = paper.category;
+            document.getElementById('paper-abstract').textContent = paper.abstract;
+            document.getElementById('paper-author').textContent = paper.author;
+            document.getElementById('paper-date').textContent = new Date(paper.date).toLocaleDateString();
+            document.getElementById('paper-views').textContent = paper.views;
+            document.getElementById('paper-filename').textContent = paper.fileName || 'document.pdf';
+
+            // PDF Logic
+            const iframe = document.getElementById('pdf-frame');
+            const noPreview = document.getElementById('no-preview');
+
+            if (paper.pdfData) {
+                iframe.src = paper.pdfData;
+            } else if (paper.pdfUrl) {
+                iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(paper.pdfUrl)}&embedded=true`;
+            } else {
+                iframe.style.display = 'none';
+                noPreview.classList.remove('hidden');
+            }
+
+            // Track View (Once per session per paper)
+            const viewKey = `viewed_${paperId}_${currentUser.username}`;
+            if (!sessionStorage.getItem(viewKey)) {
+                paper.views += 1;
+
+                // Track WHO viewed
+                if (!paper.viewedBy) paper.viewedBy = [];
+                paper.viewedBy.push({
+                    username: currentUser.username,
+                    date: new Date().toISOString()
+                });
+
+                savePaper(paper);
+                sessionStorage.setItem(viewKey, 'true');
+                document.getElementById('paper-views').textContent = paper.views;
+            }
+
+            renderComments(paper);
+
+        } else {
+            document.getElementById('loading').innerHTML = `
+                <div class="text-red-500 text-xl font-bold mb-4">Paper Not Found or Deleted</div>
+                <a href="research.html" class="text-blue-400 hover:underline">Return to Library</a>
+            `;
+        }
+
+        function savePaper(updatedPaper) {
+            const index = papers.findIndex(p => p.id === updatedPaper.id);
+            if (index !== -1) {
+                papers[index] = updatedPaper;
+                localStorage.setItem('research_papers', JSON.stringify(papers));
+                paper = updatedPaper; // Update local ref
+            }
+        }
+
+        // --- Download Logic ---
+        function downloadPaper() {
+            if (paper.pdfData) {
+                const link = document.createElement('a');
+                link.href = paper.pdfData;
+                link.download = paper.fileName || 'download.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else if (paper.pdfUrl) {
+                window.open(paper.pdfUrl, '_blank');
+            } else {
+                alert("File not available for download.");
+            }
+        }
+
+        // --- Share Logic ---
+        function sharePaper() {
+            const shareData = {
+                title: 'VGVS Research: ' + paper.title,
+                text: `Check out this research paper by ${paper.author}`,
+                url: window.location.href
+            };
+
+            if (navigator.share) {
+                navigator.share(shareData).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert("Link copied to clipboard!");
+            }
+        }
+
+        // --- Comment Logic ---
+        function renderComments(currentPaper) {
+            const commentsList = document.getElementById('comments-list');
+            const comments = currentPaper.comments || [];
+
+            if (comments.length === 0) {
+                commentsList.innerHTML = '<p class="text-gray-500 text-sm">No comments yet. Be the first to discuss!</p>';
+            } else {
+                commentsList.innerHTML = comments.map((c, index) => `
+                    <div class="bg-white/5 rounded-xl p-4 border border-white/5">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center">
+                                <span class="text-blue-400 font-bold text-sm mr-2">${c.user}</span>
+                                <span class="text-gray-500 text-xs">${new Date(c.date).toLocaleString()}</span>
+                            </div>
+                            ${currentUser.role === 'admin' ? `
+                                <button onclick="deleteComment(${index})" class="text-gray-600 hover:text-red-400 text-xs"><i class="fas fa-trash"></i></button>
+                            ` : ''}
+                        </div>
+                        <p class="text-gray-300 text-sm mb-2">${c.text}</p>
+                        
+                        <!-- Reply Section -->
+                        ${c.reply ? `
+                            <div class="ml-4 mt-2 p-3 bg-blue-900/20 border-l-2 border-blue-500 rounded-r-lg">
+                                <div class="text-blue-300 text-xs font-bold mb-1"><i class="fas fa-reply mr-1"></i> Admin Reply</div>
+                                <p class="text-gray-400 text-xs">${c.reply}</p>
+                            </div>
+                        ` : (currentUser.role === 'admin' ? `
+                            <div class="mt-2">
+                                <input type="text" id="reply-input-${index}" placeholder="Write a reply..." class="bg-black/20 border border-white/10 rounded px-2 py-1 text-xs text-white w-full mb-1 focus:outline-none focus:border-blue-500">
+                                <button onclick="postReply(${index})" class="text-xs text-blue-400 hover:text-white">Post Reply</button>
+                            </div>
+                        ` : '')}
+                    </div>
+                `).join('');
+            }
+        }
+
+        function postComment() {
+            const input = document.getElementById('comment-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            if (!paper.comments) paper.comments = [];
+
+            paper.comments.push({
+                user: currentUser.username,
+                text: text,
+                date: new Date().toISOString(),
+                reply: null
+            });
+
+            savePaper(paper);
+            renderComments(paper);
+            input.value = '';
+        }
+
+        function postReply(commentIndex) {
+            const input = document.getElementById(`reply-input-${commentIndex}`);
+            const replyText = input.value.trim();
+            if (!replyText) return;
+
+            paper.comments[commentIndex].reply = replyText;
+            savePaper(paper);
+            renderComments(paper);
+        }
+
+        function deleteComment(index) {
+            if (!confirm("Delete this comment?")) return;
+            paper.comments.splice(index, 1);
+            savePaper(paper);
+            renderComments(paper);
+        }
+    </script>
+</body>
+
+</html>
